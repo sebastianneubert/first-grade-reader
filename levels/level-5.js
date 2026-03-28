@@ -9,10 +9,10 @@
 const WORDS_L5 = {
 
   // ── A ──
-  'Ab':   ['endrot', 'teilung'],
+  'Ab':   ['end', 'teilung'],
   'Ach':  ['tung'],
   'Al':   ['ligator', 'phabet'],
-  'Am':   ['meise', 'phibie'],
+  'Am':   ['eise', 'phibie'],
   'An':   ['fänger', 'geber', 'halten', 'kunft', 'zug'],
   'Ap':   ['felsaft', 'rikose'],
   'Ar':   ['beitnehmer', 'tikel'],
@@ -52,11 +52,12 @@ const WORDS_L5 = {
   'Fu':   ['nklstation', 'ßballfeld'],
 
   // ── G ──
-  'Ga':   ['nsblümchen', 'rtenarbeit'],
+  'Ga':   ['rten', 'bel', 's', 'st'],
+  'ga':   ['nz'],
   'Ge':   ['birge', 'burtstag', 'heimnis', 'meinschaft', 'schwindigkeit', 'sellschaft'],
-  'Gi':   ['raftiere'],
+  'Gi':   ['raffe', 'tarre', 'ft'],
   'Gl':   ['etscher', 'ühwürmchen'],
-  'Go':   ['ldmedaille'],
+  'Go':   ['ld'],
   'Gr':   ['asgarten', 'enzkontrolle', 'ifvogel'],
   'Gu':   ['rkensalat'],
 

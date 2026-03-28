@@ -13,9 +13,10 @@ const WORDS_L4 = {
   'al':  ['s', 't'],
   'Am':  ['sel'],
   'An':  ['fang', 'gel', 'ker'],
-  'Ar':  ['beit'],
+  'Ar':  ['beit', 'm', 't'],
   'As':  ['t'],
-  'Au':  ['ge'],
+  'Au':  ['ge', 'to'],
+  'au':  ['ch', 'f'],
 
   // ── B ──
   'Ba':  ['ch', 'hn', 'll', 'nk', 'um', 'rt'],
@@ -24,9 +25,9 @@ const WORDS_L4 = {
   'bl':  ['au'],
   'Bl':  ['att'],
   'Bo':  ['den', 'ot'],
-  'Br':  ['ief', 'ot', 'aun'],
+  'Br':  ['ief', 'ot', 'uder', 'ust'],
   'br':  ['aun'],
-  'Bu':  ['ch', 'rg', 'nt'],
+  'Bu':  ['ch', 'rg', 's'],
   'bu':  ['nt'],
 
   // ── D ──
@@ -37,52 +38,56 @@ const WORDS_L4 = {
   'Du':  ['ft'],
 
   // ── E ──
-  'Ei':  ['mer', 's', 's'],
-  'El':  ['tern'],
-  'En':  ['gel'],
-  'Er':  ['de'],
-  'Es':  ['el'],
+  'Ei':  ['mer', 's', '', 'n', 'ne'],
+  'ei':  ['n', 'ne', 'ner'],
+  'El':  ['tern', 'f', 'fe', 'ch'],
+  'En':  ['gel', 'te', 'de'],
+  'en':  ['g'],
+  'Er':  ['de', 'nst'],
+  'Es':  ['el', 'sen'],
 
   // ── F ──
-  'Fa':  ['hn', 'rm', 'st', 'll'],
-  'Fe':  ['ld', 'nst', 'll'],
+  'Fa':  ['hne', 'rn', 'rm', 'st', 'll','rbe'],
+  'fa':  ['st'],
+  'Fe':  ['ld', 'll'],
   'Fi':  ['sch'],
   'Fl':  ['uss'],
-  'Fu':  ['ß'],
+  'Fu':  ['ß', 'nk'],
 
   // ── G ──
   'Ga':  ['rten', 'bel'],
   'ge':  ['lb'],
   'Ge':  ['ld', 'lb'],
   'Gl':  ['as'],
-  'Go':  ['ld', 'tt'],
+  'Go':  ['ld'],
   'Gr':  ['as'],
-  'gr':  ['au', 'ün'],
+  'gr':  ['au', 'ün', 'oß'],
 
   // ── H ──
   'Ha':  ['hn', 'nd', 'se', 'ut', 'us'],
-  'He':  ['rb', 'rz'],
-  'Hi':  ['rsch', 'mmel'],
+  'He':  ['ld', 'rz', 'xe'],
+  'Hi':  ['rsch', 'mmel', 'lfe'],
   'Ho':  ['lz', 'nig', 'se', 'f'],
-  'hu':  ['nd'],
-  'Hu':  ['nd', 't'],
+  'hu':  ['pen'],
+  'Hu':  ['nd', 't', 'pe', 'f'],
 
   // ── J ──
   'Ja':  ['gd', 'hr'],
 
   // ── K ──
-  'Ka':  ['hn', 'mm', 'rn', 'lt', 'tze'],
-  'Ki':  ['nd', 'rche', 'ste'],
+  'Ka':  ['hn', 'mm', 'tze'],
+  'ka':  ['lt', 'tze'],
+  'Ki':  ['nd', 'rche', 'ste', 'no', 'lo'],
   'Ko':  ['pf', 'rb', 'rn'],
   'Kr':  ['öte'],
   'Ku':  ['gel', 'h'],
 
   // ── L ──
-  'La':  ['mm', 'nd', 'ub', 'st'],
-  'Le':  ['der'],
+  'La':  ['mm', 'nd', 'ub', 'st', 'us'],
+  'Le':  ['der', 'ber', 'go', 'hm', 'ben'],
   'li':  ['la'],
-  'Li':  ['la', 'cht', 'mo'],
-  'Lo':  ['ch'],
+  'Li':  ['cht', 'mo'],
+  'Lo':  ['ch', 'hn', 's'],
   'Lu':  ['ft'],
 
   // ── M ──
@@ -93,13 +98,15 @@ const WORDS_L4 = {
 
   // ── N ──
   'Na':  ['se'],
-  'Ne':  ['st', 'tz'],
+  'Ne':  ['st', 'tz', 'mo'],
+  'ne':  ['tt'],
   'No':  ['rd'],
 
   // ── O ──
   'Of':  ['en'],
+  'of':  ['fen', 't'],
   'Ob':  ['st'],
-  'Or':  ['te'],
+  'Or':  ['t', 'gel'],
 
   // ── P ──
   'Pa':  ['rk'],
@@ -110,39 +117,42 @@ const WORDS_L4 = {
   'Re':  ['gen', 'h'],
   'Ri':  ['nd', 'ng'],
   'ro':  ['sa', 't'],
-  'Ro':  ['hr', 'ck', 'se', 'sa', 't'],
+  'Ro':  ['hr', 'ck', 'se'],
   'Ru':  ['he'],
+  'ru':  ['nd', 'hig'],
 
   // ── S ──
   'Sa':  ['ck', 'ft', 'nd', 'tz', 'lat'],
   'sch': ['warz'],
   'Sch': ['warz', 'af', 'uh', 'iff'],
   'Se':  ['il'],
-  'Si':  ['ch'],
+  'si':  ['ch', 'e', 'nd'],
   'So':  ['hn', 'nne', 'fa'],
-  'St':  ['ern'],
+  'St':  ['ern', 'adt'],
 
   // ── T ──
-  'Ta':  ['kt', 'nz', 'sse', 'g'],
+  'Ta':  ['kt', 'nz', 'sse', 'g', 'xi'],
   'Te':  ['ig', 'il'],
-  'Ti':  ['er'],
-  'To':  ['rf', 'n', 'r', 'te'],
+  'Ti':  ['er', 'ger'],
+  'To':  ['n', 'r', 'rte'],
+  'to':  ['ben', 'p'],
   'Tu':  ['ch', 'rm', 'lpe'],
 
   // ── V ──
   'Vi':  ['eh'],
 
   // ── W ──
-  'Wa':  ['ld', 'nd', 'rm', 'sser'],
+  'Wa':  ['ld', 'nd', 'sser', 'nze'],
+  'wa':  ['rm', 'rten'],
   'we':  ['iß'],
-  'We':  ['in', 'lt', 'iß'],
-  'Wi':  ['nd'],
+  'We':  ['in', 'g'],
+  'Wi':  ['nd', 'nter'],
   'Wo':  ['lf', 'rt', 'che'],
 
   // ── Z ──
-  'Za':  ['hn'],
-  'Ze':  ['it', 'lt'],
-  'Zi':  ['el'],
+  'Za':  ['hn', 'hl'],
+  'Ze':  ['it', 'lt', 'hn'],
+  'Zi':  ['el', 'ege'],
   'Zo':  ['ll', 'pf'],
   'Zu':  ['g', 'nge']
 
