@@ -12,7 +12,6 @@
 </head>
 <body>
 
-  <!-- Header -->
   <header>
     <div id="counter-display">
       <span id="counter-num">0</span>
@@ -29,7 +28,6 @@
     </div>
   </header>
 
-  <!-- Main syllable display -->
   <main id="stage" role="button" tabindex="0" aria-label="Nächste Silbe">
     <div id="syllable-wrapper">
       <div id="syllable-a" class="syllable-card active"></div>
@@ -37,10 +35,8 @@
     <div id="tap-hint">Tippen für weiter →</div>
   </main>
 
-  <!-- Fireworks canvas -->
   <canvas id="fireworks-canvas"></canvas>
 
-  <!-- Milestone overlay -->
   <div id="milestone-overlay" aria-live="polite">
     <div id="milestone-bg-count"></div>
     <div id="milestone-content">
@@ -54,8 +50,7 @@
     </div>
   </div>
 
-  <!-- Config (words for level 3) – must come before app.js -->
-  <script src="words.js"></script>
+  <!-- Wortdaten werden von app.js dynamisch nachgeladen -->
   <script src="app.js"></script>
 </body>
 </html>

@@ -2,40 +2,93 @@
    Lese-Übung  –  app.js
    ════════════════════════════════════════════════════ */
 
-// ── Buchstaben-Konfiguration ──────────────────────
-const VOWELS     = ['a', 'e', 'i', 'o', 'u'];
-const CONSONANTS = ['b','d','f','g','h','j','k','l', 'm', 'n', 'p', 'q', 'r', 's', 't', 'v', 'w', 'z'];
+// ── Konsonanten pro Level ─────────────────────────
+// Level 1 & 2 nutzen je eine eigene (wachsende) Liste
+const CONSONANTS_L1 = ['l', 's', 't', 'r', 'm', 'n'];
+const CONSONANTS_L2 = ['l', 's', 't', 'r', 'm', 'n', 'f', 'k', 'p', 'b', 'd', 'g', 'h', 'w'];
+const VOWELS        = ['a', 'e', 'i', 'o', 'u'];
 
 // ── Hilfsfunktionen ───────────────────────────────
 function rnd(arr) { return arr[Math.floor(Math.random() * arr.length)]; }
 function randomCap(ch) { return Math.random() < 0.5 ? ch.toUpperCase() : ch.toLowerCase(); }
-function randCaps(str) { return str.split('').map(randomCap).join(''); }
 
 // ── Silben-Generator ─────────────────────────────
-function makeSyllable() {
+function makeSyllable(consonants) {
   const raw = Math.random() < 0.5
-    ? rnd(CONSONANTS) + rnd(VOWELS)
-    : rnd(VOWELS) + rnd(CONSONANTS);
+    ? rnd(consonants) + rnd(VOWELS)
+    : rnd(VOWELS) + rnd(consonants);
 
+  // Ersten Buchstaben zufällig groß, Rest klein — oder alles klein
   return Math.random() < 0.5
     ? raw.charAt(0).toUpperCase() + raw.slice(1).toLowerCase()
     : raw.toLowerCase();
 }
 
-// ── Wort-Generator (Stufe 3) ──────────────────────
-function makeWord() {
-  const keys    = Object.keys(WORD_MAP);
-  const stem    = rnd(keys);
-  const ending  = rnd(WORD_MAP[stem]);
-  const word    = stem + ending;
-  return word;
+// ── Wort-Generator für Map-basierte Level (4 & 5) ─
+function makeWordFromMap(map) {
+  const keys   = Object.keys(map);
+  const stem   = rnd(keys);
+  const ending = rnd(map[stem]);
+  return stem + ending;
+}
+
+// ── Wort-Generator für Array-basiertes Level 3 ────
+function makeWordFromArray(arr) {
+  return rnd(arr);
+}
+
+// ── Dynamischer Wort-Loader ───────────────────────
+// Alle Wortdaten werden beim ersten Bedarf gecacht.
+const wordCache = {};
+
+function getWordData(lvl) {
+  if (wordCache[lvl]) return Promise.resolve(wordCache[lvl]);
+
+  const fileMap = {
+    3: 'levels/level-3.js',
+    4: 'levels/level-4.js',
+    5: 'levels/level-5.js',
+  };
+
+  return new Promise((resolve) => {
+    // Prüfen ob bereits geladen (Script-Tag schon im DOM)
+    const src = fileMap[lvl];
+    if (document.querySelector(`script[src="${src}"]`)) {
+      // Datei war bereits eingebunden, Variablen sollten verfügbar sein
+      cacheAndResolve(lvl, resolve);
+      return;
+    }
+
+    const script = document.createElement('script');
+    script.src = src;
+    script.onload = () => cacheAndResolve(lvl, resolve);
+    script.onerror = () => {
+      console.warn(`Konnte ${src} nicht laden.`);
+      wordCache[lvl] = null;
+      resolve(null);
+    };
+    document.head.appendChild(script);
+  });
+}
+
+function cacheAndResolve(lvl, resolve) {
+  if (lvl === 3) wordCache[3] = typeof WORDS_L3 !== 'undefined' ? WORDS_L3 : null;
+  if (lvl === 4) wordCache[4] = typeof WORDS_L4 !== 'undefined' ? WORDS_L4 : null;
+  if (lvl === 5) wordCache[5] = typeof WORDS_L5 !== 'undefined' ? WORDS_L5 : null;
+  resolve(wordCache[lvl]);
 }
 
 // ── Item pro Level ────────────────────────────────
-function getItem(lvl) {
-  if (lvl === 1) return makeSyllable();
-  if (lvl === 2) return [makeSyllable(), makeSyllable()];
-  return makeWord();
+async function getItem(lvl) {
+  if (lvl === 1) return makeSyllable(CONSONANTS_L1);
+  if (lvl === 2) return [makeSyllable(CONSONANTS_L2), makeSyllable(CONSONANTS_L2)];
+
+  const data = await getWordData(lvl);
+  if (!data) return '???';
+
+  if (lvl === 3) return makeWordFromArray(data);
+  if (lvl === 4) return makeWordFromMap(data);
+  if (lvl === 5) return makeWordFromMap(data);
 }
 
 // ── State ─────────────────────────────────────────
@@ -74,30 +127,27 @@ function applyTheme() {
 themeBtn.addEventListener('click', e => { e.stopPropagation(); darkMode = !darkMode; applyTheme(); });
 window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', e => { darkMode = e.matches; applyTheme(); });
 
-// ── Level cycling (1 → 2 → 3 → 1 …) ─────────────
+// ── Level cycling (1 → 2 → 3 → 4 → 5 → 1 …) ─────
+const MAX_LEVEL = 5;
 levelBtn.addEventListener('click', e => {
   e.stopPropagation();
-  level = (level % 3) + 1;
+  level = (level % MAX_LEVEL) + 1;
   levelLabel.textContent = `Stufe ${level}`;
   showNext(true);
 });
 
-// ── Font-size: Stufe 1 & 3 ────────────────────────
-// Berechnet die größte Schrift die noch in eine Zeile passt.
+// ── Font-size: Stufe 1, 3, 4, 5 (eine Zeile) ─────
 function calcFontSizeSingleLine(text) {
   const vw  = window.innerWidth;
   const vh  = window.innerHeight - 64;
-  // Startgröße: so groß wie möglich
-  let fs = Math.min(vw * 0.9, vh * 0.75);
+  let fs    = Math.min(vw * 0.9, vh * 0.75);
 
-  // Dummy-Messung über Canvas-API (sehr schnell, kein DOM-Reflow)
   const probe = document.createElement('canvas');
   const pc    = probe.getContext('2d');
 
   while (fs > 12) {
     pc.font = `800 ${fs}px 'Baloo 2', cursive`;
-    const w = pc.measureText(text).width;
-    if (w <= vw * 0.92) break;
+    if (pc.measureText(text).width <= vw * 0.92) break;
     fs -= 2;
   }
   return Math.round(fs);
@@ -108,18 +158,17 @@ function calcFontSizeTwoInOneLine(s1, sep, s2) {
   const vw  = window.innerWidth;
   const vh  = window.innerHeight - 64;
   let fs    = Math.min(vw * 0.9, vh * 0.75);
-  const PAD = vw * 0.04; // kleiner Rand links/rechts
+  const PAD = vw * 0.04;
 
   const probe = document.createElement('canvas');
   const pc    = probe.getContext('2d');
 
   while (fs > 12) {
-    pc.font       = `800 ${fs}px 'Baloo 2', cursive`;
-    const wS1     = pc.measureText(s1).width;
-    const wS2     = pc.measureText(s2).width;
-    const wSep    = pc.measureText(sep).width * 0.55; // sep ist kleiner
-    const total   = wS1 + wSep + wS2 + PAD * 2;
-    if (total <= vw) break;
+    pc.font    = `800 ${fs}px 'Baloo 2', cursive`;
+    const wS1  = pc.measureText(s1).width;
+    const wS2  = pc.measureText(s2).width;
+    const wSep = pc.measureText(sep).width * 0.55;
+    if (wS1 + wSep + wS2 + PAD * 2 <= vw) break;
     fs -= 2;
   }
   return Math.round(fs);
@@ -130,15 +179,13 @@ function setSlotContent(slot, item) {
   slot.innerHTML = '';
   slot.removeAttribute('style');
 
-  if (level === 1 || level === 3) {
-    // Einzelnes Wort / einzelne Silbe — eine Zeile, so groß wie möglich
+  if (level === 1 || level === 3 || level === 4 || level === 5) {
     const text = Array.isArray(item) ? item.join('') : item;
-    slot.textContent    = text;
-    slot.style.cssText  = `font-size:${calcFontSizeSingleLine(text)}px;white-space:nowrap;`;
+    slot.textContent   = text;
+    slot.style.cssText = `font-size:${calcFontSizeSingleLine(text)}px;white-space:nowrap;`;
   } else {
-    // Stufe 2: zwei Silben nebeneinander in EINER Zeile
-    const SEP = ' – ';
-    const fs  = calcFontSizeTwoInOneLine(item[0], SEP, item[1]);
+    // Stufe 2: zwei Silben in EINER Zeile
+    const fs    = calcFontSizeTwoInOneLine(item[0], '–', item[1]);
     const sepFs = Math.round(fs * 0.55);
 
     slot.style.cssText = 'display:flex;flex-direction:row;align-items:center;justify-content:center;width:100%;white-space:nowrap;gap:0;';
@@ -171,10 +218,10 @@ function pickAnimation() {
 }
 
 // ── Nächste Silbe / Wort ──────────────────────────
-function showNext(immediate = false) {
+async function showNext(immediate = false) {
   if (isAnimating && !immediate) return;
 
-  const nextItem = getItem(level);
+  const nextItem = await getItem(level);
 
   if (immediate) {
     setSlotContent(slotA, nextItem);
@@ -236,9 +283,7 @@ function triggerMilestone({ emoji, text }) {
   milestoneCount.textContent   = counter;
   milestoneBgCount.textContent = counter;
 
-  // Silbe komplett entfernen während Feuerwerk
   slotA.style.display = 'none';
-
   milestoneOverlay.classList.add('show');
   launchFireworks();
 }
@@ -296,7 +341,7 @@ class Particle {
   }
   update() {
     this.x  += this.vx; this.y  += this.vy;
-    this.vy += this.gravity;  this.vx *= 0.98;
+    this.vy += this.gravity; this.vx *= 0.98;
     this.alpha -= 0.018;
   }
   draw(c) {
