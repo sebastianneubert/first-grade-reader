@@ -314,3 +314,59 @@ button svg {
   :root { --header-h: 48px; }
   #tap-hint { bottom: 6px; }
 }
+
+/* ── Milestone Hintergrund-Zähler ── */
+#milestone-bg-count {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: var(--font-main);
+  font-weight: 800;
+  font-size: clamp(10rem, 45vw, 30rem);
+  line-height: 1;
+  color: #c89a10;
+  opacity: 0.13;
+  pointer-events: none;
+  letter-spacing: -0.04em;
+  user-select: none;
+}
+
+/* ── Milestone Anzahl-Zeile ── */
+#milestone-count-row {
+  margin-top: 0.3em;
+  font-family: var(--font-main);
+  font-weight: 800;
+  font-size: clamp(1.4rem, 5vw, 2.8rem);
+  color: #f5c842;
+  opacity: 0.85;
+  letter-spacing: 0.01em;
+}
+
+#milestone-count {
+  font-size: 1.25em;
+  color: #f5c842;
+}
+
+#milestone-count-label {
+  opacity: 0.75;
+}
+
+/* ── Milestone Tap-Hinweis ── */
+#milestone-tap {
+  margin-top: 1.4em;
+  font-family: var(--font-ui);
+  font-weight: 700;
+  font-size: clamp(0.75rem, 2.5vw, 1rem);
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: #fff;
+  opacity: 0.35;
+  animation: tapPulse 1.8s ease-in-out infinite;
+}
+
+@keyframes tapPulse {
+  0%, 100% { opacity: 0.25; }
+  50%       { opacity: 0.6;  }
+}

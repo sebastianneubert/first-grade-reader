@@ -4,7 +4,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
-  <title>First-Grade-Reader</title>
+  <title>Lese-Übung</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;700;900&family=Baloo+2:wght@700;800&display=swap" rel="stylesheet">
@@ -42,9 +42,16 @@
 
   <!-- Milestone overlay -->
   <div id="milestone-overlay" aria-live="polite">
+    <!-- Großer transparenter Zähler im Hintergrund -->
+    <div id="milestone-bg-count"></div>
     <div id="milestone-content">
       <div id="milestone-emoji">🎉</div>
-      <div id="milestone-text">Super!</div>
+      <div id="milestone-text">Super gemacht!</div>
+      <div id="milestone-count-row">
+        <span id="milestone-count">0</span>
+        <span id="milestone-count-label"> geschafft!</span>
+      </div>
+      <div id="milestone-tap">Tippen zum Weitermachen</div>
     </div>
   </div>
 
