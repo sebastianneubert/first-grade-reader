@@ -1,0 +1,316 @@
+/* ── Reset & Variables ── */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+  --bg:        #0d0d0d;
+  --fg:        #f5f0e8;
+  --accent:    #f5c842;
+  --accent2:   #e05c3a;
+  --header-h:  64px;
+  --radius:    24px;
+  --font-main: 'Baloo 2', cursive;
+  --font-ui:   'Nunito', sans-serif;
+  --transition: 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+[data-theme="light"] {
+  --bg:  #faf7f2;
+  --fg:  #1a1a1a;
+  --accent:  #e6960a;
+  --accent2: #c94427;
+}
+
+/* ── Base ── */
+html, body {
+  height: 100%;
+  overflow: hidden;
+  background: var(--bg);
+  color: var(--fg);
+  font-family: var(--font-ui);
+  transition: background var(--transition), color var(--transition);
+  -webkit-tap-highlight-color: transparent;
+  user-select: none;
+}
+
+/* ── Header ── */
+header {
+  position: fixed;
+  top: 0; left: 0; right: 0;
+  height: var(--header-h);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 20px;
+  z-index: 10;
+  background: var(--bg);
+  border-bottom: 1.5px solid color-mix(in srgb, var(--fg) 10%, transparent);
+  transition: background var(--transition), border-color var(--transition);
+}
+
+#counter-display {
+  display: flex;
+  align-items: baseline;
+  gap: 6px;
+}
+
+#counter-num {
+  font-family: var(--font-main);
+  font-size: 2rem;
+  font-weight: 800;
+  color: var(--accent);
+  line-height: 1;
+  transition: transform 0.2s, color 0.3s;
+}
+
+#counter-num.bump {
+  animation: bump 0.35s cubic-bezier(0.36, 0.07, 0.19, 0.97);
+}
+
+#counter-label {
+  font-size: 0.85rem;
+  font-weight: 700;
+  opacity: 0.55;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+}
+
+#controls {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+}
+
+button {
+  background: color-mix(in srgb, var(--fg) 10%, transparent);
+  color: var(--fg);
+  border: 1.5px solid color-mix(in srgb, var(--fg) 18%, transparent);
+  border-radius: 12px;
+  padding: 6px 14px;
+  font-family: var(--font-ui);
+  font-weight: 700;
+  font-size: 0.82rem;
+  cursor: pointer;
+  transition: background var(--transition), transform 0.15s, border-color var(--transition);
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+button:hover  { background: color-mix(in srgb, var(--fg) 18%, transparent); }
+button:active { transform: scale(0.94); }
+
+button svg {
+  width: 18px; height: 18px;
+  stroke: currentColor;
+  stroke-width: 2;
+  fill: none;
+  flex-shrink: 0;
+}
+/* moon icon uses fill */
+#icon-moon { fill: currentColor; stroke: none; }
+
+/* ── Stage ── */
+#stage {
+  position: fixed;
+  inset: var(--header-h) 0 0 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  outline: none;
+  overflow: hidden;
+  padding-bottom: 60px;
+}
+
+#stage:focus-visible::after {
+  content: '';
+  position: absolute;
+  inset: 4px;
+  border-radius: 20px;
+  border: 3px solid var(--accent);
+  pointer-events: none;
+}
+
+/* ── Syllable Wrapper ── */
+#syllable-wrapper {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Level 2: two-syllable layout */
+#syllable-wrapper.two-syllable {
+  gap: 0;
+}
+
+/* ── Syllable Card ── */
+.syllable-card {
+  position: absolute;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  font-family: var(--font-main);
+  font-weight: 800;
+  line-height: 1;
+  color: var(--fg);
+  opacity: 0;
+  pointer-events: none;
+  transition: color var(--transition);
+  /* font-size is set dynamically */
+}
+
+.syllable-card.active {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+/* Level 2 two-syllable arrangement */
+.syllable-card.two-part {
+  position: relative;
+  width: auto;
+  flex-shrink: 0;
+}
+
+/* ── Animations ── */
+
+/* Slide-in from right */
+@keyframes slideInRight {
+  from { transform: translateX(100%); opacity: 0; }
+  to   { transform: translateX(0);    opacity: 1; }
+}
+/* Slide-out to left */
+@keyframes slideOutLeft {
+  from { transform: translateX(0);     opacity: 1; }
+  to   { transform: translateX(-100%); opacity: 0; }
+}
+
+.anim-enter {
+  animation: slideInRight 0.4s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+}
+.anim-exit {
+  animation: slideOutLeft 0.35s cubic-bezier(0.4, 0, 1, 1) forwards;
+}
+
+/* Zoom-in variant (every 5th syllable) */
+@keyframes zoomIn {
+  from { transform: scale(0.55); opacity: 0; }
+  to   { transform: scale(1);    opacity: 1; }
+}
+@keyframes zoomOut {
+  from { transform: scale(1);    opacity: 1; }
+  to   { transform: scale(1.45); opacity: 0; }
+}
+
+.anim-enter-zoom { animation: zoomIn  0.4s cubic-bezier(0.22, 1, 0.36, 1) forwards; }
+.anim-exit-zoom  { animation: zoomOut 0.35s cubic-bezier(0.4, 0, 1, 1)   forwards; }
+
+/* Flip variant */
+@keyframes flipIn {
+  from { transform: rotateY(90deg);  opacity: 0; }
+  to   { transform: rotateY(0deg);   opacity: 1; }
+}
+@keyframes flipOut {
+  from { transform: rotateY(0deg);   opacity: 1; }
+  to   { transform: rotateY(-90deg); opacity: 0; }
+}
+
+.anim-enter-flip { animation: flipIn  0.4s cubic-bezier(0.22, 1, 0.36, 1) forwards; }
+.anim-exit-flip  { animation: flipOut 0.3s cubic-bezier(0.4, 0, 1, 1)    forwards; }
+
+/* Counter bump */
+@keyframes bump {
+  0%   { transform: scale(1); }
+  40%  { transform: scale(1.5); }
+  100% { transform: scale(1); }
+}
+
+/* ── Tap hint ── */
+#tap-hint {
+  position: absolute;
+  bottom: 18px;
+  font-size: 0.8rem;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  opacity: 0.3;
+  text-transform: uppercase;
+  transition: opacity 0.6s;
+}
+
+#stage:hover #tap-hint { opacity: 0.55; }
+
+/* ── Separator between two syllables (level 2) ── */
+.syllable-separator {
+  font-family: var(--font-main);
+  font-weight: 800;
+  color: var(--accent);
+  opacity: 0.5;
+  font-size: clamp(3rem, 12vw, 10rem);
+  line-height: 1;
+  flex-shrink: 0;
+  padding: 0 8px;
+}
+
+/* ── Fireworks canvas ── */
+#fireworks-canvas {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 50;
+  opacity: 0;
+  transition: opacity 0.5s;
+}
+
+#fireworks-canvas.active { opacity: 1; }
+
+/* ── Milestone overlay ── */
+#milestone-overlay {
+  position: fixed;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 60;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.4s;
+}
+
+#milestone-overlay.show {
+  pointer-events: auto;
+  opacity: 1;
+}
+
+#milestone-content {
+  text-align: center;
+  animation: milestoneEnter 0.5s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+@keyframes milestoneEnter {
+  from { transform: scale(0.5) translateY(40px); opacity: 0; }
+  to   { transform: scale(1) translateY(0);       opacity: 1; }
+}
+
+#milestone-emoji {
+  font-size: clamp(5rem, 20vw, 12rem);
+  line-height: 1;
+}
+
+#milestone-text {
+  font-family: var(--font-main);
+  font-weight: 800;
+  font-size: clamp(2.5rem, 10vw, 6rem);
+  color: var(--accent);
+  margin-top: 0.2em;
+  text-shadow: 0 4px 24px color-mix(in srgb, var(--accent) 50%, transparent);
+}
+
+/* ── Responsive tweaks ── */
+@media (orientation: landscape) and (max-height: 500px) {
+  :root { --header-h: 48px; }
+  #tap-hint { bottom: 6px; }
+}

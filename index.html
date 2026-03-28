@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <title>First-Grade-Reader</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;700;900&family=Baloo+2:wght@700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+
+  <!-- Header -->
+  <header>
+    <div id="counter-display">
+      <span id="counter-num">0</span>
+      <span id="counter-label">geschafft</span>
+    </div>
+    <div id="controls">
+      <button id="level-btn" title="Schwierigkeitsstufe">
+        <span id="level-label">Stufe 1</span>
+      </button>
+      <button id="theme-btn" title="Hell/Dunkel" aria-label="Farbschema wechseln">
+        <svg id="icon-moon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><path d="M21 12.79A9 9 0 1 1 11.21 3a7 7 0 0 0 9.79 9.79z"/></svg>
+        <svg id="icon-sun"  xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" style="display:none"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>
+      </button>
+    </div>
+  </header>
+
+  <!-- Main syllable display -->
+  <main id="stage" role="button" tabindex="0" aria-label="Nächste Silbe">
+    <div id="syllable-wrapper">
+      <div id="syllable-a" class="syllable-card active"></div>
+    </div>
+    <div id="tap-hint">Tippen für weiter →</div>
+  </main>
+
+  <!-- Fireworks canvas -->
+  <canvas id="fireworks-canvas"></canvas>
+
+  <!-- Milestone overlay -->
+  <div id="milestone-overlay" aria-live="polite">
+    <div id="milestone-content">
+      <div id="milestone-emoji">🎉</div>
+      <div id="milestone-text">Super!</div>
+    </div>
+  </div>
+
+  <script src="app.js"></script>
+</body>
+</html>
