@@ -27,12 +27,8 @@ function makeWord() {
   const keys    = Object.keys(WORD_MAP);
   const stem    = rnd(keys);
   const ending  = rnd(WORD_MAP[stem]);
-  // Ersten Buchstaben zufällig groß, Rest klein
   const word    = stem + ending;
-  const display = Math.random() < 0.5
-    ? word.charAt(0).toUpperCase() + word.slice(1).toLowerCase()
-    : word.toLowerCase();
-  return display;
+  return word;
 }
 
 // ── Item pro Level ────────────────────────────────

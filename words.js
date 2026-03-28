@@ -3,149 +3,186 @@
    ═══════════════════════════════════════════════════════════════
    Format:  'SILBE': ['ENDUNG1', 'ENDUNG2', ...]
    Daraus entstehen Wörter:  SILBE + ENDUNG
-   Groß/Klein der Silbe wird beim Anzeigen zufällig gewählt.
 
-   Einfach neue Einträge hinzufügen!
+   Groß-/Kleinschreibung der Silbe bestimmt das angezeigte Wort:
+     'Ba': ['ll', 'd']  →  Ball, Bad
+     'ba': ['ch', 'nk'] →  bach, bank
+
+   Einfach neue Einträge hinzufügen und alphabetisch einsortieren!
    ─────────────────────────────────────────────────────────────── */
 const WORD_MAP = {
+
   // ── A ──
-  'al':  ['t', 's', 'le', 'pen', 'arm'],
-  'an':  ['t', 'ker', 'fang', 'gel'],
-  'au':  ['ge', 'to', 'f'],
+  'Al':  ['le', 'pen', 'ter'],
+  'al':  ['s', 't'],
+  'Am':  ['sel', 'pel'],
+  'An':  ['fang', 'gel', 'ker', 'zug'],
+  'an':  ['', 'ders'],
+  'Ap':  ['fel', 'ril'],
+  'Arm': ['band', 'uhr'],
+  'Au':  ['ge', 'to'],
+  'au':  ['ch', 'f'],
 
   // ── B ──
-  'ba':  ['ll', 'd', 'ss', 'r', 'ch', 'nk'],
-  'be':  ['tt', 'rg', 'in', 'sen'],
-  'bi':  ['ld', 'ene', 'er'],
-  'bo':  ['ot', 'den', 'xer'],
-  'bu':  ['ch', 'nt', 'rg', 's'],
+  'Ba':  ['d', 'll', 'nk', 'r', 'um'],
+  'ba':  ['ld', 'ss'],
+  'Be':  ['cker', 'ere', 'in', 'rg', 'tt'],
+  'Bi':  ['bel', 'ene', 'er', 'ld'],
+  'Bo':  ['den', 'ot', 'xer'],
+  'Br':  ['ief', 'ot', 'ücke'],
+  'Bu':  ['ch', 'rg', 's', 'nt'],
+  'bu':  ['nt'],
 
   // ── D ──
-  'da':  ['s', 'mpf', 'ckel', 'ch', 'nn'],
-  'de':  ['in', 'cke', 'r'],
-  'di':  ['ch', 'ng'],
-  'do':  ['rf', 'se', 'pf'],
-  'du':  ['ft', 'nkel', 'rch'],
+  'Da':  ['ch', 'ckel', 'mpf', 'nn', 's'],
+  'da':  ['nn', 's'],
+  'De':  ['cke', 'ich', 'r'],
+  'Di':  ['ch', 'ng'],
+  'do':  ['ch'],
+  'Do':  ['rf', 'se', 'pf'],
+  'Dr':  ['ache', 'eck'],
+  'Du':  ['ft', 'nkel', 'rch'],
+  'du':  ['nkel', 'rch'],
 
   // ── E ──
-  'ei':  ['s', 'ner', 'mer', 'er'],
-  'el':  ['ch', 'tern', 'fe'],
-  'en':  ['te', 'gel'],
-  'er':  ['de', 'nst', 'ste'],
+  'Ei':  ['mer', 'ner', 's'],
+  'El':  ['ch', 'fe', 'tern'],
+  'En':  ['gel', 'te'],
+  'Er':  ['de', 'nst', 'nte'],
+  'Es':  ['el', 'sen'],
 
   // ── F ──
-  'fa':  ['st', 'hn', 'rm'],
-  'fe':  ['ld', 'st', 'ns', 'der'],
-  'fi':  ['sch', 'rm'],
-  'fo':  ['rm', 'to', 'lge'],
-  'fu':  ['ß', 'nk', 'nkel'],
+  'Fa':  ['hn', 'rm', 'st'],
+  'Fe':  ['der', 'ld', 'nst', 'r'],
+  'Fi':  ['rm', 'sch'],
+  'Fl':  ['iege', 'uss'],
+  'fo':  ['rt'],
+  'Fo':  ['lge', 'rm', 'to'],
+  'Fu':  ['nk', 'nkel', 'ß'],
 
   // ── G ──
-  'ga':  ['be', 'nz', 'rten'],
-  'ge':  ['lb', 'rn', 'ld'],
-  'gi':  ['ft'],
-  'go':  ['ld', 'tt'],
-  'gu':  ['rt', 'mmig'],
+  'Ga':  ['be', 'rten', 'sse'],
+  'Ge':  ['ld', 'lb', 'rn'],
+  'Gi':  ['ft'],
+  'gl':  ['att'],
+  'Go':  ['ld', 'tt'],
+  'Gr':  ['as', 'ippe', 'oß'],
+  'Gu':  ['mmig', 'rt'],
+  'gut': [''],
 
   // ── H ──
-  'ha':  ['nd', 'nd', 'us', 'se', 'ar'],
-  'he':  ['ft', 'rd', 'rb'],
-  'hi':  ['lfe', 'rsch', 'mmel'],
-  'ho':  ['lz', 'se', 'nig'],
-  'hu':  ['nd', 't', 'ngrig'],
+  'Ha':  ['ar', 'nd', 'se', 'us'],
+  'He':  ['ft', 'rb', 'rd'],
+  'Hi':  ['lfe', 'mmel', 'rsch'],
+  'Ho':  ['nig', 'se'],
+  'ho':  ['ch', 'hl'],
+  'Hu':  ['nd', 'ngrig', 't'],
 
   // ── I ──
-  'ig':  ['el', 'lu'],
+  'Ig':  ['el'],
+  'Im':  ['ker'],
   'im':  ['mer'],
-  'in':  ['sel', 'nen'],
+  'In':  ['sel'],
+  'in':  ['s'],
+
+  // ── J ──
+  'Ja':  ['hr', 'cke'],
+  'Jo':  ['ghurt', 'lle'],
+  'Ju':  ['ngel', 'nge'],
 
   // ── K ──
-  'ka':  ['lt', 'sse', 'fir', 'mel'],
-  'ke':  ['ssel', 'tte', 'rn'],
-  'ki':  ['nd', 'ste', 'rche'],
-  'ko':  ['pf', 'rb', 'ch'],
-  'ku':  ['chen', 'gel', 'rz'],
+  'Ka':  ['fir', 'lt', 'mel', 'sse'],
+  'Ke':  ['rn', 'ssel', 'tte'],
+  'Ki':  ['nd', 'rche', 'ste'],
+  'Kl':  ['ang', 'eid'],
+  'Ko':  ['ch', 'pf', 'rb'],
+  'Kr':  ['ähe', 'öte'],
+  'Ku':  ['chen', 'gel', 'h', 'rz'],
 
   // ── L ──
-  'la':  ['mpe', 'nd', 'ub', 'ssen'],
-  'le':  ['se', 'ben', 'der', 'rnen'],
-  'li':  ['cht', 'ebe', 'nk'],
-  'lo':  ['ch', 'se', 'cke', 'hn', 'b'],
-  'lu':  ['ft', 'pe', 'stig', 'chs'],
+  'La':  ['mp', 'nd', 'ssen', 'ub'],
+  'Le':  ['ben', 'der', 'rnen', 'se'],
+  'Li':  ['cht', 'ebe', 'nk'],
+  'Lo':  ['ch', 'cke', 'we'],
+  'Lu':  ['ft', 'pe', 'stig'],
 
   // ── M ──
-  'ma':  ['l', 'nn', 'ske', 'use'],
-  'me':  ['er', 'hl', 'ssen'],
-  'mi':  ['lch', 'tte', 'nze'],
-  'mo':  ['nd', 'os', 'rgen'],
-  'mu':  ['nd', 'tter', 'sik'],
+  'Ma':  ['l', 'nn', 'ske', 'use'],
+  'Me':  ['er', 'hl', 'ssen'],
+  'Mi':  ['lch', 'nze', 'tte'],
+  'Mo':  ['nd', 'os', 'rgen'],
+  'Mu':  ['nd', 'sik', 'tter'],
 
   // ── N ──
-  'na':  ['me', 'cht', 'se', 'del'],
-  'ne':  ['st', 'bel', 'tz'],
-  'ni':  ['cht', 'ete'],
-  'no':  ['rd', 't', 'ch'],
-  'nu':  ['ss', 'r', 'del'],
+  'Na':  ['del', 'me', 'cht', 'se'],
+  'Ne':  ['bel', 'st', 'tz'],
+  'ni':  ['cht'],
+  'No':  ['rd', 't'],
+  'no':  ['ch'],
+  'Nu':  ['del', 'ss'],
+  'nu':  ['r'],
 
   // ── O ──
-  'ob':  ['st', 'en'],
-  'of':  ['en', 't'],
-  'oh':  ['ne', 'r'],
-  'or':  ['gel', 't'],
-  'os':  ['ten'],
+  'Ob':  ['st'],
+  'Of':  ['en'],
+  'Oh':  ['r'],
+  'Or':  ['gel', 't'],
 
   // ── P ──
-  'pa':  ['ss', 'rk', 'pier'],
-  'pe':  ['nn', 'rl'],
-  'pi':  ['lot', 'lz'],
-  'po':  ['st', 'si', 'lster'],
-  'pu':  ['nkt', 'ppe', 'ster'],
+  'Pa':  ['pier', 'rk', 'ss'],
+  'Pe':  ['rl', 'nn'],
+  'Pi':  ['lot', 'lz'],
+  'Po':  ['lster', 'si', 'st'],
+  'Pu':  ['ppe', 'nkt', 'ster'],
 
   // ── R ──
-  'ra':  ['tte', 'nd', 'uch'],
-  're':  ['gen', 'cht', 'de'],
-  'ri':  ['ng', 'cht', 'ese'],
-  'ro':  ['t', 'se', 'hr'],
-  'ru':  ['he', 'nd', 'nde'],
+  'Ra':  ['nd', 'tte', 'uch'],
+  'Re':  ['gen', 'cht', 'de'],
+  'Ri':  ['ese', 'ng', 'cht'],
+  'Ro':  ['hr', 'se', 't'],
+  'Ru':  ['he', 'nd', 'nde'],
 
   // ── S ──
-  'sa':  ['nd', 'ft', 'ck'],
-  'se':  ['ite', 'el', 'hn'],
-  'si':  ['ng', 'ch', 'cher'],
-  'so':  ['nne', 'ft', 'hn'],
-  'su':  ['ppe', 'chen'],
+  'Sa':  ['ck', 'ft', 'nd'],
+  'Sc':  ['haf', 'hiff', 'hnee', 'hule', 'hwein'],
+  'Se':  ['el', 'hn', 'ite'],
+  'Si':  ['ch', 'cher', 'ng'],
+  'So':  ['hn', 'ft', 'nne'],
+  'Sp':  ['echt', 'iel'],
+  'St':  ['adt', 'ein', 'ern'],
+  'Su':  ['ppe'],
 
   // ── T ──
-  'ta':  ['g', 'sche', 'nte'],
-  'te':  ['ich', 'xt'],
-  'ti':  ['ger', 'sch', 'ef'],
-  'to':  ['r', 'pf', 'ne'],
-  'tu':  ['rm', 'ch', 'ne'],
+  'Ta':  ['g', 'nte', 'sche'],
+  'Te':  ['ich', 'xt'],
+  'Ti':  ['ef', 'ger', 'sch'],
+  'To':  ['ne', 'pf', 'r'],
+  'Tr':  ['aube', 'om'],
+  'Tu':  ['ch', 'ne', 'rm'],
 
   // ── U ──
-  'uh':  ['r'],
-  'ul':  ['me'],
-  'um':  ['weg'],
-  'un':  ['d', 'ter', 'se'],
+  'Uh':  ['r'],
+  'Ul':  ['me'],
+  'Un':  ['d', 'se', 'ter'],
+  'un':  ['d'],
 
   // ── V ──
-  'va':  ['ter', 'se'],
-  've':  ['rse', 'rkehr'],
-  'vi':  ['el', 'sion', 'deo'],
-  'vo':  ['gel', 'll', 'n'],
-  'vu':  ['lkan'],
+  'Va':  ['ter', 'se'],
+  'Vo':  ['gel', 'll', 'n'],
+  'Vu':  ['lkan'],
 
   // ── W ──
-  'wa':  ['ld', 'rm', 'sse', 'nd'],
-  'we':  ['g', 'lt', 'cker'],
-  'wi':  ['nd', 'ese', 'ld'],
-  'wo':  ['lke', 'che', 'hl'],
-  'wu':  ['rm', 'rst', 'nder'],
+  'Wa':  ['ld', 'nd', 'rm', 'sse'],
+  'We':  ['cker', 'g', 'lt'],
+  'Wi':  ['ese', 'ld', 'nd'],
+  'Wo':  ['che', 'hl', 'lke'],
+  'Wu':  ['rm', 'rst', 'nder'],
 
   // ── Z ──
-  'za':  ['hn', 'uber'],
-  'ze':  ['lt', 'it', 'hn'],
-  'zi':  ['ege', 'el', 'tter'],
-  'zo':  ['o', 'pf'],
-  'zu':  ['cker', 'g', 'nft'],
+  'Za':  ['hn', 'uber'],
+  'Ze':  ['hn', 'it', 'lt'],
+  'Zi':  ['ege', 'el', 'tter'],
+  'Zo':  ['o', 'pf'],
+  'Zu':  ['cker', 'g', 'nft'],
+
 };
