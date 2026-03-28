@@ -16,7 +16,10 @@ function makeSyllable() {
   const raw = Math.random() < 0.5
     ? rnd(CONSONANTS) + rnd(VOWELS)
     : rnd(VOWELS) + rnd(CONSONANTS);
-  return randCaps(raw);
+
+  return Math.random() < 0.5
+    ? raw.charAt(0).toUpperCase() + raw.slice(1).toLowerCase()
+    : raw.toLowerCase();
 }
 
 // ── Wort-Generator (Stufe 3) ──────────────────────
@@ -36,7 +39,7 @@ function makeWord() {
 function getItem(lvl) {
   if (lvl === 1) return makeSyllable();
   if (lvl === 2) return [makeSyllable(), makeSyllable()];
-  return makeWord();           // Stufe 3
+  return makeWord();
 }
 
 // ── State ─────────────────────────────────────────

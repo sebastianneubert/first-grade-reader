@@ -67,11 +67,11 @@ const WORD_MAP = {
   'ku':  ['chen', 'gel', 'rz'],
 
   // ── L ──
-  'la':  ['mp', 'nd', 'ub', 'ssen'],
+  'la':  ['mpe', 'nd', 'ub', 'ssen'],
   'le':  ['se', 'ben', 'der', 'rnen'],
   'li':  ['cht', 'ebe', 'nk'],
-  'lo':  ['ch', 'we', 'cke'],
-  'lu':  ['ft', 'pe', 'stig'],
+  'lo':  ['ch', 'se', 'cke', 'hn', 'b'],
+  'lu':  ['ft', 'pe', 'stig', 'chs'],
 
   // ── M ──
   'ma':  ['l', 'nn', 'ske', 'use'],
@@ -130,6 +130,8 @@ const WORD_MAP = {
 
   // ── V ──
   'va':  ['ter', 'se'],
+  've':  ['rse', 'rkehr'],
+  'vi':  ['el', 'sion', 'deo'],
   'vo':  ['gel', 'll', 'n'],
   'vu':  ['lkan'],
 
