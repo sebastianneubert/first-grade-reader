@@ -1,26 +1,42 @@
-/* ────────────────────────────────────────────────
+/* ════════════════════════════════════════════════════
    Lese-Übung  –  app.js
-   ──────────────────────────────────────────────── */
+   ════════════════════════════════════════════════════ */
 
 // ── Buchstaben-Konfiguration ──────────────────────
 const VOWELS     = ['a', 'e', 'i', 'o', 'u'];
-const CONSONANTS = ['l', 's', 't', 'r', 'm', 'n', 'f', 'k', 'p'];
-// Weitere Konsonanten einfach hinzufügen: 'b','d','g','h','j','v','w','z'
+const CONSONANTS = ['b','d','f','g','h','j','k','l', 'm', 'n', 'p', 'q', 'r', 's', 't', 'v', 'w', 'z'];
+
+// ── Hilfsfunktionen ───────────────────────────────
+function rnd(arr) { return arr[Math.floor(Math.random() * arr.length)]; }
+function randomCap(ch) { return Math.random() < 0.5 ? ch.toUpperCase() : ch.toLowerCase(); }
+function randCaps(str) { return str.split('').map(randomCap).join(''); }
 
 // ── Silben-Generator ─────────────────────────────
-function randomCap(ch) {
-  return Math.random() < 0.5 ? ch.toUpperCase() : ch.toLowerCase();
-}
-
 function makeSyllable() {
-  const c = CONSONANTS[Math.floor(Math.random() * CONSONANTS.length)];
-  const v = VOWELS[Math.floor(Math.random() * VOWELS.length)];
-  const raw = Math.random() < 0.5 ? c + v : v + c;
-  return raw.split('').map(randomCap).join('');
+  const raw = Math.random() < 0.5
+    ? rnd(CONSONANTS) + rnd(VOWELS)
+    : rnd(VOWELS) + rnd(CONSONANTS);
+  return randCaps(raw);
 }
 
+// ── Wort-Generator (Stufe 3) ──────────────────────
+function makeWord() {
+  const keys    = Object.keys(WORD_MAP);
+  const stem    = rnd(keys);
+  const ending  = rnd(WORD_MAP[stem]);
+  // Ersten Buchstaben zufällig groß, Rest klein
+  const word    = stem + ending;
+  const display = Math.random() < 0.5
+    ? word.charAt(0).toUpperCase() + word.slice(1).toLowerCase()
+    : word.toLowerCase();
+  return display;
+}
+
+// ── Item pro Level ────────────────────────────────
 function getItem(lvl) {
-  return lvl === 1 ? makeSyllable() : [makeSyllable(), makeSyllable()];
+  if (lvl === 1) return makeSyllable();
+  if (lvl === 2) return [makeSyllable(), makeSyllable()];
+  return makeWord();           // Stufe 3
 }
 
 // ── State ─────────────────────────────────────────
@@ -45,7 +61,6 @@ const milestoneText    = document.getElementById('milestone-text');
 const milestoneEmoji   = document.getElementById('milestone-emoji');
 const milestoneCount   = document.getElementById('milestone-count');
 const milestoneBgCount = document.getElementById('milestone-bg-count');
-const milestoneTap     = document.getElementById('milestone-tap');
 const ctx              = canvas.getContext('2d');
 
 // ── Theme ─────────────────────────────────────────
@@ -60,23 +75,55 @@ function applyTheme() {
 themeBtn.addEventListener('click', e => { e.stopPropagation(); darkMode = !darkMode; applyTheme(); });
 window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', e => { darkMode = e.matches; applyTheme(); });
 
-// ── Level ─────────────────────────────────────────
+// ── Level cycling (1 → 2 → 3 → 1 …) ─────────────
 levelBtn.addEventListener('click', e => {
   e.stopPropagation();
-  level = level === 1 ? 2 : 1;
+  level = (level % 3) + 1;
   levelLabel.textContent = `Stufe ${level}`;
   showNext(true);
 });
 
-// ── Font-size ─────────────────────────────────────
-function calcFontSize(text) {
+// ── Font-size: Stufe 1 & 3 ────────────────────────
+// Berechnet die größte Schrift die noch in eine Zeile passt.
+function calcFontSizeSingleLine(text) {
   const vw  = window.innerWidth;
   const vh  = window.innerHeight - 64;
-  const len = text.length;
-  let size  = Math.min(vw * 0.72, vh * 0.7);
-  if (len > 2) size *= 0.85;
-  if (len > 4) size *= 0.75;
-  return Math.round(size);
+  // Startgröße: so groß wie möglich
+  let fs = Math.min(vw * 0.9, vh * 0.75);
+
+  // Dummy-Messung über Canvas-API (sehr schnell, kein DOM-Reflow)
+  const probe = document.createElement('canvas');
+  const pc    = probe.getContext('2d');
+
+  while (fs > 12) {
+    pc.font = `800 ${fs}px 'Baloo 2', cursive`;
+    const w = pc.measureText(text).width;
+    if (w <= vw * 0.92) break;
+    fs -= 2;
+  }
+  return Math.round(fs);
+}
+
+// ── Font-size: Stufe 2 (zwei Silben, eine Zeile) ──
+function calcFontSizeTwoInOneLine(s1, sep, s2) {
+  const vw  = window.innerWidth;
+  const vh  = window.innerHeight - 64;
+  let fs    = Math.min(vw * 0.9, vh * 0.75);
+  const PAD = vw * 0.04; // kleiner Rand links/rechts
+
+  const probe = document.createElement('canvas');
+  const pc    = probe.getContext('2d');
+
+  while (fs > 12) {
+    pc.font       = `800 ${fs}px 'Baloo 2', cursive`;
+    const wS1     = pc.measureText(s1).width;
+    const wS2     = pc.measureText(s2).width;
+    const wSep    = pc.measureText(sep).width * 0.55; // sep ist kleiner
+    const total   = wS1 + wSep + wS2 + PAD * 2;
+    if (total <= vw) break;
+    fs -= 2;
+  }
+  return Math.round(fs);
 }
 
 // ── Slot-Inhalt setzen ────────────────────────────
@@ -84,18 +131,18 @@ function setSlotContent(slot, item) {
   slot.innerHTML = '';
   slot.removeAttribute('style');
 
-  if (level === 1) {
-    slot.textContent    = item;
-    slot.style.fontSize = calcFontSize(item) + 'px';
+  if (level === 1 || level === 3) {
+    // Einzelnes Wort / einzelne Silbe — eine Zeile, so groß wie möglich
+    const text = Array.isArray(item) ? item.join('') : item;
+    slot.textContent    = text;
+    slot.style.cssText  = `font-size:${calcFontSizeSingleLine(text)}px;white-space:nowrap;`;
   } else {
-    // Vertikal stapeln → passt immer auf den Handyscreen
-    const vw  = window.innerWidth;
-    const vh  = window.innerHeight - 64;
-    // Jede Silbe bekommt max ~42 % der Stage-Höhe und max 85 % Breite
-    const fs  = Math.round(Math.min(vh * 0.42, vw * 0.85));
-    const sepFs = Math.round(fs * 0.3);
+    // Stufe 2: zwei Silben nebeneinander in EINER Zeile
+    const SEP = ' – ';
+    const fs  = calcFontSizeTwoInOneLine(item[0], SEP, item[1]);
+    const sepFs = Math.round(fs * 0.55);
 
-    slot.style.cssText = 'display:flex;flex-direction:column;align-items:center;justify-content:center;gap:0.04em;width:100%;';
+    slot.style.cssText = 'display:flex;flex-direction:row;align-items:center;justify-content:center;width:100%;white-space:nowrap;gap:0;';
 
     const s1  = document.createElement('span');
     const sep = document.createElement('span');
@@ -105,10 +152,10 @@ function setSlotContent(slot, item) {
     sep.textContent = '–';
     s2.textContent  = item[1];
 
-    const sylStyle = `font-family:var(--font-main);font-weight:800;color:var(--fg);font-size:${fs}px;line-height:1.05;`;
+    const sylStyle = `font-family:var(--font-main);font-weight:800;color:var(--fg);font-size:${fs}px;line-height:1;white-space:nowrap;`;
     s1.style.cssText  = sylStyle;
     s2.style.cssText  = sylStyle;
-    sep.style.cssText = `font-family:var(--font-main);font-weight:800;color:var(--accent);opacity:0.4;font-size:${sepFs}px;line-height:1;`;
+    sep.style.cssText = `font-family:var(--font-main);font-weight:800;color:var(--accent);opacity:0.45;font-size:${sepFs}px;line-height:1;padding:0 0.12em;white-space:nowrap;`;
 
     slot.appendChild(s1);
     slot.appendChild(sep);
@@ -124,7 +171,7 @@ function pickAnimation() {
   return 'slide';
 }
 
-// ── Nächste Silbe ─────────────────────────────────
+// ── Nächste Silbe / Wort ──────────────────────────
 function showNext(immediate = false) {
   if (isAnimating && !immediate) return;
 
@@ -177,7 +224,6 @@ function updateCounter() {
   counterNum.classList.remove('bump');
   void counterNum.offsetWidth;
   counterNum.classList.add('bump');
-
   const milestone = MILESTONES.find(m => counter % m.at === 0);
   if (milestone) triggerMilestone(milestone);
 }
@@ -186,12 +232,14 @@ let milestoneActive = false;
 
 function triggerMilestone({ emoji, text }) {
   milestoneActive = true;
-  milestoneEmoji.textContent = emoji;
-  milestoneText.textContent  = text;
+  milestoneEmoji.textContent   = emoji;
+  milestoneText.textContent    = text;
   milestoneCount.textContent   = counter;
   milestoneBgCount.textContent = counter;
-  // Silbe verstecken während Feuerwerk läuft
-  slotA.style.visibility = 'hidden';
+
+  // Silbe komplett entfernen während Feuerwerk
+  slotA.style.display = 'none';
+
   milestoneOverlay.classList.add('show');
   launchFireworks();
 }
@@ -201,11 +249,10 @@ function closeMilestone() {
   milestoneActive = false;
   milestoneOverlay.classList.remove('show');
   stopFireworks();
-  slotA.style.visibility = '';
+  slotA.style.display = '';
   showNext();
 }
 
-// Tap/Click im Milestone-Overlay schließt es
 milestoneOverlay.addEventListener('click', closeMilestone);
 
 // ── Touch / Click ─────────────────────────────────
@@ -216,9 +263,8 @@ stage.addEventListener('keydown', e => {
 
 let touchStartX = 0;
 stage.addEventListener('touchstart', e => { touchStartX = e.touches[0].clientX; }, { passive: true });
-stage.addEventListener('touchend', e => {
-  const dx = e.changedTouches[0].clientX - touchStartX;
-  if (Math.abs(dx) > 30) onAdvance();
+stage.addEventListener('touchend',   e => {
+  if (Math.abs(e.changedTouches[0].clientX - touchStartX) > 30) onAdvance();
 });
 
 function onAdvance() {
@@ -242,33 +288,29 @@ resizeCanvas();
 class Particle {
   constructor(x, y, color) {
     this.x = x; this.y = y;
-    this.vx = (Math.random() - 0.5) * 14;
-    this.vy = (Math.random() - 0.7) * 16;
-    this.alpha  = 1;
-    this.color  = color;
-    this.radius = Math.random() * 5 + 2;
+    this.vx      = (Math.random() - 0.5) * 14;
+    this.vy      = (Math.random() - 0.7) * 16;
+    this.alpha   = 1;
+    this.color   = color;
+    this.radius  = Math.random() * 5 + 2;
     this.gravity = 0.42;
   }
   update() {
-    this.x  += this.vx;
-    this.y  += this.vy;
-    this.vy += this.gravity;
-    this.vx *= 0.98;
+    this.x  += this.vx; this.y  += this.vy;
+    this.vy += this.gravity;  this.vx *= 0.98;
     this.alpha -= 0.018;
   }
   draw(c) {
     c.globalAlpha = Math.max(0, this.alpha);
     c.fillStyle   = this.color;
-    c.beginPath();
-    c.arc(this.x, this.y, this.radius, 0, Math.PI * 2);
-    c.fill();
+    c.beginPath(); c.arc(this.x, this.y, this.radius, 0, Math.PI * 2); c.fill();
   }
 }
 
 const FW_COLORS = ['#f5c842','#e05c3a','#5bcefa','#c084fc','#4ade80','#fb923c','#f472b6','#fbbf24'];
 
 function burst(x, y) {
-  const color = FW_COLORS[Math.floor(Math.random() * FW_COLORS.length)];
+  const color = rnd(FW_COLORS);
   for (let i = 0; i < 60; i++) particles.push(new Particle(x, y, color));
 }
 
@@ -276,12 +318,12 @@ function launchFireworks() {
   fwActive = true;
   canvas.classList.add('active');
   particles = [];
-  [0, 350, 700, 1050, 1400, 1800].forEach(delay => {
+  [0, 350, 700, 1050, 1400, 1800].forEach(d =>
     setTimeout(() => {
       if (!fwActive) return;
       burst(canvas.width * (0.2 + Math.random() * 0.6), canvas.height * (0.1 + Math.random() * 0.45));
-    }, delay);
-  });
+    }, d)
+  );
   animateFireworks();
 }
 
