@@ -5,74 +5,67 @@
    Groß-/Kleinschreibung ist fix gesetzt.
    Neue Wörter einfach ans Array anhängen.
    ─────────────────────────────────────────────────────────────── */
-const WORDS_L3 = [
-  "Apfel",
-  "Auto",
+const WORDS_L2 = [
+  "Affe",
+  "Ameise",
+  "Ampel",
 
-  "Baum",
-  "Bein",
-  "Brot",
+  "Ball",
+  "Bett",
+  "Bus",
 
-  "Clown",
-
-  "Dach",
   "Dose",
-  "Drache",
+  "Dino",
 
-  "Eule",
-  "Ei",
+  "Esel",
+  "Ente",
 
   "Fisch",
-  "Freund",
-
-  "Gabel",
-  "Gurke",
+  "Fahne",
 
   "Haus",
-  "Heft",
-  "Hose",
+  "Hase",
+  "Hand",
 
   "Igel",
-  "Indianer",
+  "Insel",
 
   "Jacke",
 
-  "Käse",
-  "Kind",
-  "Kuh",
+  "Kanne",
+  "Katze",
+  "Kamel",
 
-  "Licht",
-  "Löwe",
+  "Lampe",
+  "Limo",
 
+  "Mama",
   "Maus",
   "Milch",
-  "Mütze",
+  "Mond",
 
-  "Nudel",
+  "Nase",
 
   "Ofen",
-  "Ohr",
+  "Oma",
 
-  "Pferd",
-  "Pilz",
+  "Puppe",
 
-  "Reise",
+  "Rad",
   "Rose",
 
-  "Schaf",
-  "Schule",
   "Sonne",
-  "Spiel",
+  "Salat",
 
-  "Tisch",
-  "Treppe",
+  "Tasse",
+  "Tiger",
 
-  "Uhr",
+  "Uhu",
 
-  "Vogel",
+  "Vase",
 
-  "Wiese",
+  "Wanne",
   "Wolke",
 
-  "Ziege"
+  "Zebra"
 ];

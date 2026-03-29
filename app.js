@@ -24,7 +24,7 @@ function makeSyllable(consonants) {
     : raw.toLowerCase();
 }
 
-// ── Wort-Generator für Map-basierte Level (4 & 5) ─
+// ── Wort-Generator für Map-basierte Level ─
 function makeWordFromMap(map) {
   const keys   = Object.keys(map);
   const stem   = rnd(keys);
@@ -32,7 +32,7 @@ function makeWordFromMap(map) {
   return stem + ending;
 }
 
-// ── Wort-Generator für Array-basiertes Level 3 ────
+// ── Wort-Generator für Array-basiertes Level ────
 function makeWordFromArray(arr) {
   return rnd(arr);
 }
@@ -42,9 +42,10 @@ function makeWordFromArray(arr) {
 const wordCache = {};
 
 function getWordData(lvl) {
-  if (wordCache[lvl]) return Promise.resolve(wordCache[lvl]);
+  // if (wordCache[lvl]) return Promise.resolve(wordCache[lvl]);
 
   const fileMap = {
+    2: 'levels/level-2.js',
     3: 'levels/level-3.js',
     4: 'levels/level-4.js',
     5: 'levels/level-5.js',
@@ -72,6 +73,7 @@ function getWordData(lvl) {
 }
 
 function cacheAndResolve(lvl, resolve) {
+  if (lvl === 2) wordCache[2] = typeof WORDS_L2 !== 'undefined' ? WORDS_L2 : null;
   if (lvl === 3) wordCache[3] = typeof WORDS_L3 !== 'undefined' ? WORDS_L3 : null;
   if (lvl === 4) wordCache[4] = typeof WORDS_L4 !== 'undefined' ? WORDS_L4 : null;
   if (lvl === 5) wordCache[5] = typeof WORDS_L5 !== 'undefined' ? WORDS_L5 : null;
@@ -81,13 +83,13 @@ function cacheAndResolve(lvl, resolve) {
 // ── Item pro Level ────────────────────────────────
 async function getItem(lvl) {
   if (lvl === 1) return makeSyllable(CONSONANTS_L1);
-  if (lvl === 2) return [makeSyllable(CONSONANTS_L2), makeSyllable(CONSONANTS_L2)];
 
   const data = await getWordData(lvl);
   if (!data) return '???';
 
+  if (lvl === 2) return makeWordFromArray(data);
   if (lvl === 3) return makeWordFromArray(data);
-  if (lvl === 4) return makeWordFromMap(data);
+  if (lvl === 4) return makeWordFromArray(data);
   if (lvl === 5) return makeWordFromMap(data);
 }
 
@@ -146,7 +148,7 @@ function calcFontSizeSingleLine(text) {
   const pc    = probe.getContext('2d');
 
   while (fs > 12) {
-    pc.font = `800 ${fs}px 'Baloo 2', cursive`;
+    pc.font = `800 ${fs}px 'Andika', cursive`;
     if (pc.measureText(text).width <= vw * 0.92) break;
     fs -= 2;
   }
@@ -179,34 +181,9 @@ function setSlotContent(slot, item) {
   slot.innerHTML = '';
   slot.removeAttribute('style');
 
-  if (level === 1 || level === 3 || level === 4 || level === 5) {
-    const text = Array.isArray(item) ? item.join('') : item;
-    slot.textContent   = text;
-    slot.style.cssText = `font-size:${calcFontSizeSingleLine(text)}px;white-space:nowrap;`;
-  } else {
-    // Stufe 2: zwei Silben in EINER Zeile
-    const fs    = calcFontSizeTwoInOneLine(item[0], '–', item[1]);
-    const sepFs = Math.round(fs * 0.55);
-
-    slot.style.cssText = 'display:flex;flex-direction:row;align-items:center;justify-content:center;width:100%;white-space:nowrap;gap:0;';
-
-    const s1  = document.createElement('span');
-    const sep = document.createElement('span');
-    const s2  = document.createElement('span');
-
-    s1.textContent  = item[0];
-    sep.textContent = '–';
-    s2.textContent  = item[1];
-
-    const sylStyle = `font-family:var(--font-main);font-weight:800;color:var(--fg);font-size:${fs}px;line-height:1;white-space:nowrap;`;
-    s1.style.cssText  = sylStyle;
-    s2.style.cssText  = sylStyle;
-    sep.style.cssText = `font-family:var(--font-main);font-weight:800;color:var(--accent);opacity:0.45;font-size:${sepFs}px;line-height:1;padding:0 0.12em;white-space:nowrap;`;
-
-    slot.appendChild(s1);
-    slot.appendChild(sep);
-    slot.appendChild(s2);
-  }
+  const text = Array.isArray(item) ? item.join('') : item;
+  slot.textContent   = text;
+  slot.style.cssText = `font-size:${calcFontSizeSingleLine(text)}px;white-space:nowrap;`;
 }
 
 // ── Animation-Typ ─────────────────────────────────
