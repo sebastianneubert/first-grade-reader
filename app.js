@@ -17,7 +17,6 @@ function makeSyllable(consonants) {
     ? rnd(consonants) + rnd(VOWELS)
     : rnd(VOWELS) + rnd(consonants);
 
-  // Ersten Buchstaben zufällig groß, Rest klein — oder alles klein
   return Math.random() < 0.5
     ? raw.charAt(0).toUpperCase() + raw.slice(1).toLowerCase()
     : raw.toLowerCase();
@@ -29,32 +28,36 @@ function makeWordFromArray(arr) {
 }
 
 // ── Dynamischer Wort-Loader ───────────────────────
-// Alle Wortdaten werden beim ersten Bedarf gecacht.
 const wordCache = {};
 
-function getWordData(lvl) {
-  if (wordCache[lvl]) return Promise.resolve(wordCache[lvl]);
+async function getWordData(lvl) {
+  if (lvl === 1) return null;
 
-  const fileMap = {
-    2: 'levels/level-2.js',
-    3: 'levels/level-3.js',
-    4: 'levels/level-4.js',
-    5: 'levels/level-5.js',
-    6: 'levels/level-6.js',
-  };
+  // undefined = noch nie versucht; null = versucht, aber nicht gefunden
+  if (wordCache[lvl] !== undefined) return wordCache[lvl];
+
+  const src = `levels/level-${lvl}.js`;
 
   return new Promise((resolve) => {
-    // Prüfen ob bereits geladen (Script-Tag schon im DOM)
-    const src = fileMap[lvl];
-    if (document.querySelector(`script[src="${src}"]`)) {
-      // Datei war bereits eingebunden, Variablen sollten verfügbar sein
-      cacheAndResolve(lvl, resolve);
+    const existing = document.querySelector(`script[src="${src}"]`);
+
+    if (existing) {
+      // Script ist bereits im DOM und fertig geladen
+      const key = `WORDS_L${lvl}`;
+      wordCache[lvl] = window[key] ?? null;
+      if (!wordCache[lvl]) console.warn(`${key} fehlt (Script bereits im DOM)`);
+      resolve(wordCache[lvl]);
       return;
     }
 
     const script = document.createElement('script');
     script.src = src;
-    script.onload = () => cacheAndResolve(lvl, resolve);
+    script.onload = () => {
+      const key = `WORDS_L${lvl}`;
+      wordCache[lvl] = window[key] ?? null;
+      if (!wordCache[lvl]) console.warn(`${key} fehlt nach Script-Laden`);
+      resolve(wordCache[lvl]);
+    };
     script.onerror = () => {
       console.warn(`Konnte ${src} nicht laden.`);
       wordCache[lvl] = null;
@@ -62,19 +65,6 @@ function getWordData(lvl) {
     };
     document.head.appendChild(script);
   });
-}
-
-function cacheAndResolve(lvl, resolve) {
-  const key = `WORDS_L${lvl}`;
-
-  if (typeof globalThis[key] !== 'undefined') {
-    wordCache[lvl] = globalThis[key];
-  } else {
-    console.warn(`${key} fehlt nach Script-Laden`);
-    wordCache[lvl] = null;
-  }
-
-  resolve(wordCache[lvl]);
 }
 
 // ── Item pro Level ────────────────────────────────

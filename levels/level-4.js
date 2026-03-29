@@ -1,7 +1,7 @@
 /* ═══════════════════════════════════════════════════════════════
    level-4.js  –  Stufe 4: 1 Klasse - drittes Trimester Wörter
    ═══════════════════════════════════════════════════════════════ */
-const WORDS_L4 = [
+var WORDS_L4 = [
   "Abend",
   "Ananas",
   "Ampellicht",

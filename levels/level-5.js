@@ -1,7 +1,7 @@
 /* ═══════════════════════════════════════════════════════════════
    level-5.js  – 1 Klasse - komplette Wortliste mit Silbentrennung
    ═══════════════════════════════════════════════════════════════ */
- const WORDS_L5 = [
+var WORDS_L5 = [
   "Aal",
   "A-bend",
   "Af-fe",
