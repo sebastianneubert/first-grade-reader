@@ -1,10 +1,6 @@
 /* ═══════════════════════════════════════════════════════════════
-   words-level3.js  –  Stufe 3: einfache 3-4 buchstabige Wörter
-   ═══════════════════════════════════════════════════════════════
-   Handverlesen: echte deutsche Wörter, die Erstklässler kennen.
-   Groß-/Kleinschreibung ist fix gesetzt.
-   Neue Wörter einfach ans Array anhängen.
-   ─────────────────────────────────────────────────────────────── */
+   level-3.js  –  Stufe 3: 1 Klasse - zweites Trimester Wörter
+   ═══════════════════════════════════════════════════════════════ */
 const WORDS_L3 = [
   "Apfel",
   "Auto",

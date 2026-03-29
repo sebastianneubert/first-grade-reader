@@ -2,8 +2,7 @@
    Lese-Übung  –  app.js
    ════════════════════════════════════════════════════ */
 
-// ── Konsonanten pro Level ─────────────────────────
-// Level 1 & 2 nutzen je eine eigene (wachsende) Liste
+// ── Konsonanten Level 1 ─────────────────────────
 const CONSONANTS_L1 = ['l', 's', 't', 'r', 'm', 'n'];
 const CONSONANTS_L2 = ['l', 's', 't', 'r', 'm', 'n', 'f', 'k', 'p', 'b', 'd', 'g', 'h', 'w'];
 const VOWELS        = ['a', 'e', 'i', 'o', 'u'];
@@ -24,14 +23,6 @@ function makeSyllable(consonants) {
     : raw.toLowerCase();
 }
 
-// ── Wort-Generator für Map-basierte Level ─
-function makeWordFromMap(map) {
-  const keys   = Object.keys(map);
-  const stem   = rnd(keys);
-  const ending = rnd(map[stem]);
-  return stem + ending;
-}
-
 // ── Wort-Generator für Array-basiertes Level ────
 function makeWordFromArray(arr) {
   return rnd(arr);
@@ -42,13 +33,14 @@ function makeWordFromArray(arr) {
 const wordCache = {};
 
 function getWordData(lvl) {
-  // if (wordCache[lvl]) return Promise.resolve(wordCache[lvl]);
+  if (wordCache[lvl]) return Promise.resolve(wordCache[lvl]);
 
   const fileMap = {
     2: 'levels/level-2.js',
     3: 'levels/level-3.js',
     4: 'levels/level-4.js',
     5: 'levels/level-5.js',
+    6: 'levels/level-6.js',
   };
 
   return new Promise((resolve) => {
@@ -73,10 +65,15 @@ function getWordData(lvl) {
 }
 
 function cacheAndResolve(lvl, resolve) {
-  if (lvl === 2) wordCache[2] = typeof WORDS_L2 !== 'undefined' ? WORDS_L2 : null;
-  if (lvl === 3) wordCache[3] = typeof WORDS_L3 !== 'undefined' ? WORDS_L3 : null;
-  if (lvl === 4) wordCache[4] = typeof WORDS_L4 !== 'undefined' ? WORDS_L4 : null;
-  if (lvl === 5) wordCache[5] = typeof WORDS_L5 !== 'undefined' ? WORDS_L5 : null;
+  const key = `WORDS_L${lvl}`;
+
+  if (typeof globalThis[key] !== 'undefined') {
+    wordCache[lvl] = globalThis[key];
+  } else {
+    console.warn(`${key} fehlt nach Script-Laden`);
+    wordCache[lvl] = null;
+  }
+
   resolve(wordCache[lvl]);
 }
 
@@ -87,10 +84,7 @@ async function getItem(lvl) {
   const data = await getWordData(lvl);
   if (!data) return '???';
 
-  if (lvl === 2) return makeWordFromArray(data);
-  if (lvl === 3) return makeWordFromArray(data);
-  if (lvl === 4) return makeWordFromArray(data);
-  if (lvl === 5) return makeWordFromMap(data);
+  return makeWordFromArray(data);
 }
 
 // ── State ─────────────────────────────────────────
@@ -121,16 +115,17 @@ const ctx              = canvas.getContext('2d');
 function prefersDark() {
   return window.matchMedia('(prefers-color-scheme: dark)').matches;
 }
+
 function applyTheme() {
   document.documentElement.setAttribute('data-theme', darkMode ? 'dark' : 'light');
   iconMoon.style.display = darkMode ? 'block' : 'none';
   iconSun.style.display  = darkMode ? 'none'  : 'block';
 }
+
 themeBtn.addEventListener('click', e => { e.stopPropagation(); darkMode = !darkMode; applyTheme(); });
 window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', e => { darkMode = e.matches; applyTheme(); });
 
-// ── Level cycling (1 → 2 → 3 → 4 → 5 → 1 …) ─────
-const MAX_LEVEL = 5;
+const MAX_LEVEL = 6;
 levelBtn.addEventListener('click', e => {
   e.stopPropagation();
   level = (level % MAX_LEVEL) + 1;
@@ -138,7 +133,6 @@ levelBtn.addEventListener('click', e => {
   showNext(true);
 });
 
-// ── Font-size: Stufe 1, 3, 4, 5 (eine Zeile) ─────
 function calcFontSizeSingleLine(text) {
   const vw  = window.innerWidth;
   const vh  = window.innerHeight - 64;
@@ -150,27 +144,6 @@ function calcFontSizeSingleLine(text) {
   while (fs > 12) {
     pc.font = `800 ${fs}px 'Andika', cursive`;
     if (pc.measureText(text).width <= vw * 0.92) break;
-    fs -= 2;
-  }
-  return Math.round(fs);
-}
-
-// ── Font-size: Stufe 2 (zwei Silben, eine Zeile) ──
-function calcFontSizeTwoInOneLine(s1, sep, s2) {
-  const vw  = window.innerWidth;
-  const vh  = window.innerHeight - 64;
-  let fs    = Math.min(vw * 0.9, vh * 0.75);
-  const PAD = vw * 0.04;
-
-  const probe = document.createElement('canvas');
-  const pc    = probe.getContext('2d');
-
-  while (fs > 12) {
-    pc.font    = `800 ${fs}px 'Baloo 2', cursive`;
-    const wS1  = pc.measureText(s1).width;
-    const wS2  = pc.measureText(s2).width;
-    const wSep = pc.measureText(sep).width * 0.55;
-    if (wS1 + wSep + wS2 + PAD * 2 <= vw) break;
     fs -= 2;
   }
   return Math.round(fs);
